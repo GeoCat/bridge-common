@@ -1,3 +1,4 @@
+import webbrowser
 from .catalog import MetadataCatalog     
 
 class GeoNetworkCatalog(MetadataCatalog):
@@ -18,12 +19,13 @@ class GeoNetworkCatalog(MetadataCatalog):
 
     def publish_metadata(self, metadata):
         headers = {"accept": "application/json"}
-        url = self.api_url() + "/records?uuidProcessing=OVERWRITE"        
+        url = self.api_url() + "/records?assignToCatalog=true"        
         with open(metadata,'rb') as f:
+            self.nam.setTokenInHeader()
             files = {'file': (metadata, f, 'application/zip', {'Expires': '0'})}        
-            r = self.nam.session.post(url, files=files, headers = headers)
+            r = self.nam.session.post(url, files=files, headers = headers)            
         r.raise_for_status()
-        js = r.json()
+        js = r.json()        
         if "errors" in r and r['errors']:
             raise Exception(r['errors'])       
 
@@ -38,7 +40,10 @@ class GeoNetworkCatalog(MetadataCatalog):
         return ret
 
     def metadata_url(self):
-        pass
+        return self.service_url + "/srv/spa/catalog.search#/metadata/" + uuid
+
+    def open_metadata(self, uuid):        
+        webbrowser.open_new_tab(self.metadata_url())
 
     def set_layer_url(self, uuid, url):
         pass
