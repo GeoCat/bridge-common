@@ -39,11 +39,11 @@ class GeoNetworkCatalog(MetadataCatalog):
         ret =  self.http_request(url, headers = {"Accept": "application/json"})
         return ret
 
-    def metadata_url(self):
+    def metadata_url(self, uuid):
         return self.service_url + "/srv/spa/catalog.search#/metadata/" + uuid
 
     def open_metadata(self, uuid):        
-        webbrowser.open_new_tab(self.metadata_url())
+        webbrowser.open_new_tab(self.metadata_url(uuid))
 
     def set_layer_url(self, uuid, url):
         pass
