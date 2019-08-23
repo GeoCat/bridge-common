@@ -21,12 +21,10 @@ class GeoNetworkCatalog(MetadataCatalog):
         return self.http_request(url)
 
     def publish_metadata(self, metadata):
-        headers = {"accept": "application/json"}
         self.nam.setTokenInHeader()
-        url = self.xml_services_url() + "/mef.import=?_csrf=" + self.nam.token
-        with open(metadata,'rb') as f:
-            files = {'mefFile': (metadata, f, 'application/zip', {'Expires': '0'})}        
-            r = self.nam.session.post(url, files=files, headers = headers)
+        url = self.xml_services_url() + "/mef.import"
+        files = {'mefFile': open(metadata, "rb")}        
+        r = self.nam.session.post(url, files=files)
         print (r.text)
         r.raise_for_status()
         '''
