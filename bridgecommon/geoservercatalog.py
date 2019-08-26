@@ -33,6 +33,9 @@ class GeoServerCatalog(GeodataCatalog):
         self.workspace = workspace
         self.gscatalog = GSConfigCatalogUsingNetworkAccessManager(service_url, network_access_manager)
 
+    def base_url(self):
+        return "/".join(self.service_url.split("/")[:-1])
+
     def publish_vector_layer_from_file(self, filename, layername, crsauthid, style, stylename):
         log.logInfo("Publishing layer from file: %s" % filename)
         self._ensureWorkspaceExists()
@@ -132,7 +135,7 @@ class GeoServerCatalog(GeodataCatalog):
         webbrowser.open_new_tab(url)
 
     def layer_wms(self, names, bbox, srs):
-        baseurl = "/".join(self.service_url.split("/")[:-1])
+        baseurl = self.base_url()
         names = ",".join(["%s:%s" % (self.workspace, name) for name in names])
         url = ("%s/%s/wms?service=WMS&version=1.1.0&request=GetMap&layers=%s&format=application/openlayers&bbox=%s&srs=%s&width=800&height=600" 
                     % (baseurl, self.workspace, names, bbox, srs))

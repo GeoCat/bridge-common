@@ -23,8 +23,9 @@ class GeoNetworkCatalog(MetadataCatalog):
     def publish_metadata(self, metadata):
         self.nam.setTokenInHeader()
         url = self.xml_services_url() + "/mef.import"
-        files = {'mefFile': open(metadata, "rb")}        
-        r = self.nam.session.post(url, files=files)
+        with open(metadata, "rb") as f:
+            files = {'mefFile': f}
+            r = self.nam.session.post(url, files=files)
         print (r.text)
         r.raise_for_status()
         '''
