@@ -4,7 +4,7 @@ from .catalog import MetadataCatalog
 class GeoNetworkCatalog(MetadataCatalog):
 
     def api_url(self):
-        return self.service_url + "/srv/api/0.1"
+        return self.service_url + "/srv/api/"
 
     def xml_services_url(self):
         return self.service_url + "/srv/eng"
@@ -33,8 +33,7 @@ class GeoNetworkCatalog(MetadataCatalog):
         '''
 
     def delete_metadata(self, uuid):
-        #TODO: bucket??
-        url = self.api_url() + "/records?uuids=%s" % uuid
+        url = self.api_url() + "/records/" + uuid
         self.http_request(url, method="delete")
 
     def me(self):
