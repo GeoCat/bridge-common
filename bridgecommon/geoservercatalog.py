@@ -55,7 +55,7 @@ class GeoServerCatalog(GeodataCatalog):
         elif filename.lower().endswith(".gpkg"):
             with open(filename, "rb") as f:
                 url = "%s/workspaces/%s/datastores/%s/file.gpkg?update=overwrite" % (self.service_url, self.workspace, layername)
-                self.http_request(url, f.read(), "put",)
+                self.http_request(url, f.read(), "put")
             storeName = os.path.splitext(os.path.basename(filename))[0]
             url = "%s/workspaces/%s/layers/%s.json" % (self.service_url, self.workspace, storeName)
             #TODO ensure layer name 
@@ -85,12 +85,13 @@ class GeoServerCatalog(GeodataCatalog):
         self.gscatalog.create_coveragestore(layername, self.workspace, filename)
         self._set_layer_style(layername, stylename)
 
-    def create_group(self, groupname, layernames, styles, bounds):
-        try:
-            layergroup = self.gscatalog.create_layergroup(groupname, layernames, layernames, bounds, workspace=self.workspace)
+    def create_group(self, groupname, layernames):
+        try:            
+            group = self.gscatalog.create_layergroup(groupname, layernames, layernames, None, workspace=self.workspace)
+            self.gscatalog.save(group)
         except ConflictingDataError:
             layergroup = self.gscatalog.get_layergroups(groupname)[0]
-            layergroup.dirty.update(layers = layernames, styles = names)
+            layergroup.dirty.update(layers = layernames, styles = layernames)
 
     def publish_style(self, name, sld=None, zipfile=None):
         feedback.setText("Publishing style for layer %s" % name)
@@ -141,11 +142,16 @@ class GeoServerCatalog(GeodataCatalog):
                     % (baseurl, self.workspace, names, bbox, srs))
         return url
         
-    def set_layer_metadata_link(name, url):
+    def set_layer_metadata_link(self, name, url):
         layer = self._get_layer(name)
         resource = layer.resource
         resource.metadata_links= [('text/html', 'other', url),]
         self.gscatalog.save(resource)
+
+    def delete_workspace(self):
+        ws  = self.gscatalog.get_workspaces(self.workspace)
+        if ws:
+            self.gscatalog.delete(ws[0], recurse = True)
 
     ##########
 
