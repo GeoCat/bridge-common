@@ -1,6 +1,4 @@
-# bridge-common
-Library making publishing geospatial data (and metadata) on the internet as easy as using Python
+# Bridge Common Library
+This project is no longer relevant and has been archived. 
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
-
-![bridge-common](bridge-common.png "Birdge Common Library")
+All functionality has been incorporated in one way or another in the [QGIS Bridge](https://github.com/geocat/qgis-bridge-plugin/) project.
